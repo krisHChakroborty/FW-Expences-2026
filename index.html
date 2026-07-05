@@ -125,24 +125,35 @@
         <!-- CATEGORY 2: BUSINESS INSIGHTS & REPORTS -->
         <div class="drawer-category">
             <h4 class="category-title">📊 Category 2: Insights & Reports</h4>
-            <div class="filter-box">
+            
+            <!-- SECTION A: TOTAL EXPENSES BY DATE -->
+            <div class="filter-box sub-section" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-dark);">
+                <label style="display:block; margin-bottom:5px;">Total Expenses Date Range</label>
                 <div class="date-row">
-                    <input type="date" id="startDate" class="drawer-input" placeholder="From">
-                    <input type="date" id="endDate" class="drawer-input" placeholder="To">
+                    <input type="date" id="startDateTotal" class="drawer-input" placeholder="From">
+                    <input type="date" id="endDateTotal" class="drawer-input" placeholder="To">
                 </div>
-                <button type="button" id="generateRangeTotalBtn" class="drawer-btn btn-green">Calculate Range Total</button>
-                
-                <div class="search-container" style="margin-top: 15px;">
+                <button type="button" id="generateRangeTotalBtn" class="drawer-btn btn-green">Calculate Total Expenses</button>
+            </div>
+            
+            <!-- SECTION B: ITEM ANALYSIS BY SEPARATE DATE -->
+            <div class="filter-box sub-section">
+                <label style="display:block; margin-bottom:5px;">Item Specific Date Range</label>
+                <div class="date-row">
+                    <input type="date" id="startDateItem" class="drawer-input" placeholder="From">
+                    <input type="date" id="endDateItem" class="drawer-input" placeholder="To">
+                </div>
+                <div class="search-container" style="margin-top: 10px;">
                     <input type="text" id="analyticsItem" class="drawer-input" placeholder="🔍 Type item for deep analysis..." autocomplete="off">
                     <button type="button" id="analyticsArrowBtn" class="arrow-btn" style="color: white;">▼</button>
                     <div id="analyticsDropdownList" class="dropdown-suggestions"></div>
                 </div>
-                <button type="button" id="generateReportBtn" class="drawer-btn btn-yellow" style="margin-top: 10px; color: black;">Analyze Specific Item</button>
+                <button type="button" id="generateReportBtn" class="drawer-btn btn-yellow" style="margin-top: 10px; color: black;">Analyze Specific Item's Total Expense</button>
+            </div>
 
-                <div id="analyticsResult" class="drawer-result-box" style="display: none;">
-                    <h5 id="reportTitleHeader">Summary</h5>
-                    <div id="reportMetricsOutput"></div>
-                </div>
+            <div id="analyticsResult" class="drawer-result-box" style="display: none;">
+                <h5 id="reportTitleHeader">Summary</h5>
+                <div id="reportMetricsOutput"></div>
             </div>
         </div>
 

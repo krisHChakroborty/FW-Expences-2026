@@ -124,11 +124,11 @@ window.onload = function() {
         alert("✅ Expense Saved Locally!");
     };
 
-    // Range report script logic
+    // Range report script logic - TOTAL EXPENSES (Uses Total Date Inputs)
     document.getElementById('generateRangeTotalBtn').onclick = function() {
-        const startVal = document.getElementById('startDate').value;
-        const endVal = document.getElementById('endDate').value;
-        if (!startVal || !endVal) { alert('Select Dates.'); return; }
+        const startVal = document.getElementById('startDateTotal').value;
+        const endVal = document.getElementById('endDateTotal').value;
+        if (!startVal || !endVal) { alert('Select Dates for Total Expenses.'); return; }
         
         const start = new Date(startVal).setHours(0,0,0,0);
         const end = new Date(endVal).setHours(23,59,59,999);
@@ -144,13 +144,13 @@ window.onload = function() {
         document.getElementById('analyticsResult').style.display = 'block';
     };
 
-    // Item specific summary filter analytics
+    // Item specific summary filter analytics - SPECIFIC ITEM'S TOTAL EXPENSE (Uses Item Date Inputs)
     document.getElementById('generateReportBtn').onclick = function() {
         const target = document.getElementById('analyticsItem').value.trim();
         if (!target) { alert('Select Item.'); return; }
         
-        const startVal = document.getElementById('startDate').value;
-        const endVal = document.getElementById('endDate').value;
+        const startVal = document.getElementById('startDateItem').value;
+        const endVal = document.getElementById('endDateItem').value;
         const start = startVal ? new Date(startVal).setHours(0,0,0,0) : null;
         const end = endVal ? new Date(endVal).setHours(23,59,59,999) : null;
 
