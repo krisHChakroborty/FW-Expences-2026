@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Wave Fries - Clean Terminal</title>
+    <title>First Wave Fries - Cloud Terminal</title>
+    
+    <!-- Premium Google Fonts Integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Plus+Jakarta+Sans:wght@200..800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Core Compatibility Production Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-<!-- Top Navigation Bar (Premium Look) -->
+<!-- Top Navigation Bar -->
 <nav class="navbar">
     <div class="nav-brand">
         <img src="HD Logo.jpg" alt="Logo" class="nav-logo">
         <span>First Wave Fries</span>
     </div>
-    <!-- 3 Lines Toggle Button (Hamburger Menu) -->
     <button type="button" id="menuToggleBtn" class="menu-toggle-btn">☰</button>
 </nav>
 
 <div class="container">
     
-    <!-- Quick Stats Overview Row -->
+    <!-- Realtime Metric Statistics Dashboard Widget -->
     <div class="mini-stats-grid">
         <div class="stat-box">
             <span class="stat-label">Today:</span>
@@ -32,7 +42,7 @@
         </div>
     </div>
 
-    <!-- MAIN INTERFACE: Only New Expense Entry is Visible Now -->
+    <!-- MAIN TRANSACTION DATA INTERFACE -->
     <main class="main-content">
         <div class="card entry-card">
             <div class="card-header-yellow">
@@ -40,6 +50,7 @@
             </div>
             
             <div class="form-body">
+                <!-- Search & Suggestion Engine -->
                 <div class="form-group full-width">
                     <label for="searchItem">Select Item Name</label>
                     <div class="search-container">
@@ -49,6 +60,7 @@
                     </div>
                 </div>
                 
+                <!-- Quantitative Metrics Column Rows -->
                 <div class="form-row-three">
                     <div class="form-group">
                         <label for="expenseAmount">Amount (₹)</label>
@@ -81,19 +93,20 @@
                     </div>
                 </div>
 
+                <!-- Database Push Submission Execution Wire -->
                 <button type="button" id="addExpenseBtn" class="btn-submit">SAVE EXPENSE ENTRY</button>
             </div>
         </div>
     </main>
 
-    <!-- Refined Center-Aligned Bottom Footer -->
+    <!-- Refined Bottom Alignment Branding Section -->
     <footer class="terminal-footer">
-        <p class="branding-credit">Design by <span>Krishna @</span></p>
+        <p class="branding-credit">Design by <span>Krishna</span></p>
         <p class="copyright-text">© 2026 First Wave Fries. All Rights Reserved.</p>
     </footer>
 </div>
 
-<!-- SLIDE-OUT SIDE PANEL: Hidden inside the 3 lines menu -->
+<!-- SLIDE-OUT METRIC DASHBOARD PANEL (DRAWER) -->
 <div id="sideDrawer" class="side-drawer">
     <div class="drawer-header">
         <h3>Terminal Options</h3>
@@ -101,7 +114,7 @@
     </div>
     
     <div class="drawer-content">
-        <!-- CATEGORY 1: LOGS & HISTORY -->
+        <!-- CATEGORY 1: CLOUD DATA ENGINE LOGS -->
         <div class="drawer-category">
             <h4 class="category-title">📂 Category 1: Expense Ledger</h4>
             <div class="table-scroll-container">
@@ -115,18 +128,16 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="expenseLogs">
-                        <!-- Dynamic Logs -->
-                    </tbody>
+                    <tbody id="expenseLogs"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- CATEGORY 2: BUSINESS INSIGHTS & REPORTS -->
+        <!-- CATEGORY 2: DEEP ANALYTICAL INSIGHT GENERATORS -->
         <div class="drawer-category">
             <h4 class="category-title">📊 Category 2: Insights & Reports</h4>
             
-            <!-- SECTION A: TOTAL EXPENSES BY DATE -->
+            <!-- SECTION A: TOTAL TIME COMPONENT ANALYSIS -->
             <div class="filter-box sub-section" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-dark);">
                 <label style="display:block; margin-bottom:5px;">Total Expenses Date Range</label>
                 <div class="date-row">
@@ -136,7 +147,7 @@
                 <button type="button" id="generateRangeTotalBtn" class="drawer-btn btn-green">Calculate Total Expenses</button>
             </div>
             
-            <!-- SECTION B: ITEM ANALYSIS BY SEPARATE DATE -->
+            <!-- SECTION B: UNIT COMPONENT DEEP TRACKING FILTER -->
             <div class="filter-box sub-section">
                 <label style="display:block; margin-bottom:5px;">Item Specific Date Range</label>
                 <div class="date-row">
@@ -151,13 +162,14 @@
                 <button type="button" id="generateReportBtn" class="drawer-btn btn-yellow" style="margin-top: 10px; color: black;">Analyze Specific Item's Total Expense</button>
             </div>
 
+            <!-- Quantitative Output Results Container -->
             <div id="analyticsResult" class="drawer-result-box" style="display: none;">
                 <h5 id="reportTitleHeader">Summary</h5>
                 <div id="reportMetricsOutput"></div>
             </div>
         </div>
 
-        <!-- CATEGORY 3: SECURITY CONTROLS -->
+        <!-- CATEGORY 3: CLOUD MASTER DATA OVERRIDE ARCHITECTURE -->
         <div class="drawer-category secure-zone">
             <h4 class="category-title" style="color: #ff6b6b;">🔒 Category 3: System Security</h4>
             <p>Delete all history permanent reset.</p>
@@ -166,10 +178,8 @@
     </div>
 </div>
 
-<!-- Background overlay when menu is open -->
 <div id="drawerOverlay" class="drawer-overlay"></div>
 
-<!-- Main Javascript Engine Only -->
 <script src="script.js"></script>
 </body>
 </html>

@@ -1,44 +1,43 @@
-/* Premium Yellow, Black & White Styling */
+/* Premium Master System CSS Configuration Variables */
 :root {
-    --bg-black: #0F0F11;
-    --card-black: #1A1A1E;
-    --neon-yellow: #FFD43B;
-    --pure-white: #FFFFFF;
-    --border-dark: #2A2A30;
-    --text-grey: #9AAAAA;
+    --bg-darker: #0d0e11;
+    --bg-card: #14161d;
+    --border-dark: #232731;
+    --text-primary: #f1f3f5;
+    --text-muted: #868e96;
+    
+    --neon-yellow: #fcc419;
+    --neon-yellow-hover: #fab005;
+    --danger-red: #ff6b6b;
+    --success-green: #51cf66;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 body {
-    background-color: var(--bg-black);
-    color: var(--pure-white);
-    padding-bottom: 40px;
-    overflow-x: hidden;
+    background-color: var(--bg-darker);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.container {
-    max-width: 750px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-/* Navbar */
+/* Header Navbar Configuration Styles */
 .navbar {
-    background: var(--card-black);
-    padding: 15px 25px;
+    background-color: var(--bg-card);
+    border-bottom: 2px solid var(--border-dark);
+    padding: 12px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 3px solid var(--neon-yellow);
     position: sticky;
     top: 0;
-    z-index: 90;
+    z-index: 100;
 }
 
 .nav-brand {
@@ -48,242 +47,439 @@ body {
 }
 
 .nav-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--neon-yellow);
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--neon-yellow);
 }
 
 .nav-brand span {
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-/* 3 Lines Hamburger Button */
 .menu-toggle-btn {
-    background: transparent;
-    border: none;
-    color: var(--neon-yellow);
-    font-size: 26px;
+    background: none;
+    border: 2px solid var(--border-dark);
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    padding: 4px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    padding: 5px 10px;
-    transition: transform 0.2s;
-}
-.menu-toggle-btn:hover {
-    transform: scale(1.1);
+    transition: all 0.2s ease;
 }
 
-/* Mini Top Stats Row */
-.mini-stats-grid {
+.menu-toggle-btn:hover {
+    border-color: var(--neon-yellow);
+    color: var(--neon-yellow);
+}
+
+/* App Main Container Layout Framework */
+.container {
+    max-width: 650px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 24px 16px;
+    flex: 1;
     display: flex;
-    gap: 15px;
-    margin: 25px 0;
+    flex-direction: column;
+}
+
+/* Quick Metrics Row Styles */
+.mini-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .stat-box {
-    flex: 1;
-    background: var(--card-black);
+    background-color: var(--bg-card);
     border: 1px solid var(--border-dark);
-    padding: 12px 20px;
+    padding: 14px 16px;
     border-radius: 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .stat-label {
-    color: var(--text-grey);
-    font-size: 13px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
     text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .stat-value {
-    color: var(--neon-yellow);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.35rem;
     font-weight: 700;
-    font-size: 18px;
+    color: var(--neon-yellow);
 }
 
-/* Main Entry Card Styling */
-.entry-card {
-    background: var(--card-black);
-    border-radius: 16px;
-    border: 2px solid var(--border-dark);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    overflow: hidden;
+/* Center Input Workstation Card Layout */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    overflow: visible; /* Dropdown ko visibility issue se bachaane ke liye visible kiya */
 }
 
 .card-header-yellow {
-    background: var(--neon-yellow);
-    padding: 20px;
-    text-align: center;
+    background-color: var(--neon-yellow);
+    padding: 14px 20px;
 }
 
 .card-header-yellow h2 {
-    color: var(--bg-black);
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: center;
 }
 
 .form-body {
-    padding: 25px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 6px;
 }
 
-.full-width {
-    grid-column: span 3;
-}
-
-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-grey);
-}
-
-/* Modern Input Boxes */
-.input-field, .select-field, .drawer-input {
-    background: #222227;
-    border: 2px solid var(--border-dark);
-    color: var(--pure-white);
-    padding: 14px 16px;
-    border-radius: 8px;
-    outline: none;
-    font-size: 14px;
+.form-group label {
+    font-size: 0.82rem;
     font-weight: 600;
-    transition: all 0.2s;
-}
-
-.input-field:focus, .select-field:focus, .drawer-input:focus {
-    border-color: var(--neon-yellow);
-    background: #2a2a32;
-    box-shadow: 0 0 10px rgba(255, 212, 59, 0.2);
-}
-
-.highlight-amount {
-    color: #51cf66;
-    font-size: 16px;
+    color: var(--text-muted);
 }
 
 .form-row-three {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+    grid-template-columns: 1.2fr 1.3fr 1fr;
+    gap: 12px;
+}
+
+/* Structural Form Controls Presentation Layer Styles */
+.input-field, .select-field, .drawer-input {
+    background-color: #1a1d26;
+    border: 1px solid var(--border-dark);
+    color: var(--text-primary);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.input-field:focus, .select-field:focus, .drawer-input:focus {
+    border-color: var(--neon-yellow);
+}
+
+.highlight-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--success-green);
 }
 
 .qty-unit-wrapper {
-    display: flex;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: 4px;
 }
 
-.qty-unit-wrapper input { width: 40%; }
-.qty-unit-wrapper select { width: 60%; cursor: pointer;}
-
-/* Big Save Entry Button */
-.btn-submit {
-    background: var(--neon-yellow);
-    color: var(--bg-black);
-    border: none;
+/* Autocomplete Suggestion Core Components UI Engine */
+.search-container {
+    position: relative;
     width: 100%;
-    padding: 16px;
-    font-weight: 800;
-    font-size: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    margin-top: 10px;
-    transition: background 0.2s, transform 0.1s;
 }
 
-.btn-submit:hover {
-    background: #fcc419;
-}
-.btn-submit:active { transform: scale(0.99); }
-
-/* Dropdowns Engine */
-.search-container { position: relative; width: 100%; }
-.search-container input { width: 100%; padding-right: 40px; }
 .arrow-btn {
-    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    background: transparent; border: none; color: var(--text-grey); cursor: pointer;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.75rem;
 }
 
 .dropdown-suggestions {
-    position: absolute; top: 100%; left: 0; right: 0; background: #222227;
-    border: 2px solid var(--neon-yellow); border-top: none; max-height: 200px;
-    overflow-y: auto; z-index: 100; border-radius: 0 0 8px 8px; display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background-color: #1a1d26;
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
-.dropdown-suggestions div { padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border-dark); font-size: 13px;}
-.dropdown-suggestions div:hover { background: var(--neon-yellow); color: var(--bg-black); font-weight: 700; }
 
-/* 3-LINES SIDE PANEL SLIDE DRAWER SETUP */
+.dropdown-suggestions div {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid #222633;
+}
+
+.dropdown-suggestions div:hover {
+    background-color: var(--neon-yellow);
+    color: #000;
+    font-weight: 600;
+}
+
+/* Standard Button Elements with Click Blocking Fix */
+.btn-submit {
+    background-color: var(--neon-yellow);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+    position: relative;
+    z-index: 10; /* Dropdown suggestions se upar layer rakhne ke liye */
+}
+
+.btn-submit:hover {
+    background-color: var(--neon-yellow-hover);
+}
+
+/* Slide-out Terminal Infrastructure Drawer Sidebar Core Rules */
 .side-drawer {
-    position: fixed; top: 0; right: -450px; width: 420px; height: 100%;
-    background: var(--card-black); border-left: 3px solid var(--neon-yellow);
-    z-index: 100; padding: 25px; overflow-y: auto; transition: right 0.3s cubic-bezier(0, 0, 0.2, 1);
-    box-shadow: -10px 0 30px rgba(0,0,0,0.7);
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 85%;
+    max-width: 480px;
+    height: 100%;
+    background-color: var(--bg-card);
+    border-left: 2px solid var(--border-dark);
+    z-index: 1001;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
 }
-@media (max-width: 500px) { .side-drawer { width: 100%; right: -100%; } }
 
-.side-drawer.open { right: 0; }
+.side-drawer.open {
+    right: 0;
+}
 
 .drawer-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border-dark); padding-bottom: 15px; margin-bottom: 25px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.drawer-header h3 { text-transform: uppercase; font-weight: 800; color: var(--neon-yellow); }
-.close-drawer-btn { background: transparent; border: none; color: white; font-size: 32px; cursor: pointer; }
 
-/* Category Blocks in Side Menu */
-.drawer-category {
-    background: #222227; border: 1px solid var(--border-dark);
-    padding: 15px; border-radius: 12px; margin-bottom: 25px;
+.drawer-header h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--neon-yellow);
 }
+
+.close-drawer-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.drawer-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
 .category-title {
-    font-size: 13px; font-weight: 700; text-transform: uppercase;
-    margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid var(--border-dark);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    border-left: 3px solid var(--neon-yellow);
+    padding-left: 8px;
 }
 
-/* Inside Drawer Tables */
-.table-scroll-container { max-height: 200px; overflow-y: auto; font-size: 12px; }
-table { width: 100%; border-collapse: collapse; }
-th { background: var(--bg-black); padding: 8px; text-align: left; }
-td { padding: 8px; border-bottom: 1px solid var(--border-dark); }
-.delete-btn { background: #ffc9c9; color: #c92a2a; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 700; }
-
-/* Filter fields inside Drawer */
-.date-row { display: flex; gap: 10px; margin-bottom: 10px; }
-.date-row input { flex: 1; padding: 8px; font-size: 12px; }
-.drawer-input { width: 100%; padding: 10px; font-size: 12px; background: var(--bg-black); }
-.drawer-btn { width: 100%; padding: 10px; border: none; font-weight: 700; font-size: 12px; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
-.btn-green { background: #2b8a3e; color: white; }
-.btn-yellow { background: var(--neon-yellow); }
-.btn-red { background: #e03131; color: white; }
-
-.drawer-result-box { background: var(--bg-black); padding: 12px; border-radius: 6px; margin-top: 15px; border-left: 4px solid var(--neon-yellow); }
-.drawer-result-box p { font-size: 12px; margin: 5px 0; }
-.metric-highlight { color: var(--neon-yellow); font-weight: 700; }
-
-.terminal-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 12px;
-    color: var(--text-grey);
+/* Ledger Structural Spreadsheet Grid Table Styles */
+.table-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    max-height: 250px;
+    background-color: var(--bg-darker);
 }
-.branding-credit span { color: var(--neon-yellow); font-weight: 700; }
 
-/* Overlay Background shadow */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+th {
+    background-color: #1a1d26;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-dark);
+    position: sticky;
+    top: 0;
+}
+
+td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1a1d26;
+    white-space: nowrap;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: var(--danger-red);
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Interactive Component Inputs Layer Inside Drawer System */
+.date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.drawer-input {
+    padding: 10px 12px;
+    font-size: 0.88rem;
+}
+
+.drawer-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-green { background-color: var(--success-green); color: #000; }
+.btn-yellow { background-color: var(--neon-yellow); color: #000; }
+.btn-red { background-color: var(--danger-red); color: #000; }
+
+.drawer-result-box {
+    margin-top: 15px;
+    background-color: var(--bg-darker);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.drawer-result-box h5 {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.metric-highlight {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--neon-yellow);
+    font-size: 1.1rem;
+}
+
+.secure-zone {
+    border: 1px dashed var(--danger-red);
+    padding: 14px;
+    border-radius: 8px;
+}
+
+.secure-zone p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+/* Background Overlay Component Logic */
 .drawer-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6); z-index: 95; display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: none;
 }
-.drawer-overlay.open { display: block; }
+
+.drawer-overlay.open {
+    display: block;
+}
+
+/* Standard Footer Credit Controls */
+.terminal-footer {
+    margin-top: auto;
+    text-align: center;
+    padding-top: 30px;
+}
+
+.branding-credit {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.branding-credit span {
+    color: var(--neon-yellow);
+    font-weight: 700;
+}
+
+.copyright-text {
+    font-size: 0.72rem;
+    color: #495057;
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+}
+
+/* Responsive Adaptive CSS Framework Rules For Small Width Devices */
+@media(max-width: 480px) {
+    .form-row-three {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .navbar { padding: 12px 16px; }
+}

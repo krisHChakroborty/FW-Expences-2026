@@ -1,7 +1,23 @@
-// Master Security Configuration Password
+// Automated Cloud Environment Initialization Object
+const firebaseConfig = {
+    apiKey: "AIzaSyDEGHlL-5KWl4P9QL41ezNb_0bspKIwqwM",
+    authDomain: "fw-fries-expense-tracker.firebaseapp.com",
+    // FIXED: Correct Asia Region Realtime Database Endpoint URL
+    databaseURL: "https://fw-fries-expense-tracker-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+    projectId: "fw-fries-expense-tracker",
+    storageBucket: "fw-fries-expense-tracker.firebasestorage.app",
+    messagingSenderId: "655587623989",
+    appId: "1:655587623989:web:239b14b8e6871a93001d7c",
+    measurementId: "G-VXY2D1TYD8"
+};
+
+// Initialize Firebase App Layer Instance
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Security Master Password Protection Parameter
 const OWNER_PASSWORD = "FW8473"; 
 
-// Pure Local Array Database
 const itemNamesDatabase = [
     "French Fries", "Veg patty", "Paneer Patty", "Chilli Potato Bites", 
     "Cheesy Corn Triangle", "Chicken Breast Strips", "Batata Vada", 
@@ -41,45 +57,32 @@ const itemNamesDatabase = [
     "Meal Container with lid", "Fries Box", "Peri Peri", "Cheese", "Tangy"
 ];
 
-// Browser LocalStorage Cache Array Engine Loader
-let globalExpenseLedger = JSON.parse(localStorage.getItem('firstWaveExpenses')) || [];
+let globalExpenseLedger = [];
 
-// Save Helper Engine
-function syncLocalStorage() {
-    localStorage.setItem('firstWaveExpenses', JSON.stringify(globalExpenseLedger));
-}
-
-// Global scope functions so buttons can find them
-function closeDrawer() {
-    document.getElementById('sideDrawer').classList.remove('open');
-    document.getElementById('drawerOverlay').classList.remove('open');
-}
-
-function deleteExpense(id) {
+function deleteExpense(firebaseId) {
     if (confirm("❌ Entry Delete karni hai?")) {
         const enteredPassword = prompt("🔐 Enter Owner Password to delete:");
         if (enteredPassword === OWNER_PASSWORD) {
-            globalExpenseLedger = globalExpenseLedger.filter(item => item.id !== id);
-            syncLocalStorage();
-            renderLedgerTable();
-            calculateFinancialOverview();
-            alert("✅ Entry Successfully Deleted.");
+            database.ref('expenses/' + firebaseId).remove()
+                .then(() => alert("✅ Entry Successfully Deleted."))
+                .catch(err => alert("❌ Error deleting: " + err.message));
         } else if (enteredPassword !== null) {
             alert("❌ Galat Password.");
         }
     }
 }
 
-// Main Window Initializer Engine
+function closeDrawer() {
+    document.getElementById('sideDrawer').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+}
+
 window.onload = function() {
-    // Current date filter loader
     document.getElementById('expenseDate').valueAsDate = new Date();
     
-    // Setup Custom Search Filters
     setupDropdown('searchItem', 'dropdownArrowBtn', 'dropdownList');
     setupDropdown('analyticsItem', 'analyticsArrowBtn', 'analyticsDropdownList');
 
-    // Drawer Core Controls
     document.getElementById('menuToggleBtn').onclick = function() {
         document.getElementById('sideDrawer').classList.add('open');
         document.getElementById('drawerOverlay').classList.add('open');
@@ -87,8 +90,26 @@ window.onload = function() {
     document.getElementById('closeDrawerBtn').onclick = closeDrawer;
     document.getElementById('drawerOverlay').onclick = closeDrawer;
 
-    // LOCAL STORAGE WRITE: SAVE EXPENSE ACTION KEY
-    document.getElementById('addExpenseBtn').onclick = function() {
+    // REALTIME DATABASE DATA SYNC
+    database.ref('expenses').on('value', (snapshot) => {
+        globalExpenseLedger = [];
+        const data = snapshot.val();
+        if (data) {
+            Object.keys(data).forEach(key => {
+                globalExpenseLedger.push({
+                    firebaseId: key,
+                    ...data[key]
+                });
+            });
+        }
+        renderLedgerTable();
+        calculateFinancialOverview();
+    });
+
+    // WRITE ACTION LOGIC WIRE WITH CORE BUG FIXES
+    document.getElementById('addExpenseBtn').onclick = function(e) {
+        e.preventDefault();
+        
         const name = document.getElementById('searchItem').value.trim();
         const amount = parseFloat(document.getElementById('expenseAmount').value);
         const qty = parseInt(document.getElementById('expenseQty').value);
@@ -101,7 +122,6 @@ window.onload = function() {
         }
 
         const logEntry = {
-            id: "ID_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
             name: name,
             amount: amount,
             qty: qty,
@@ -109,22 +129,17 @@ window.onload = function() {
             date: dateStr
         };
         
-        globalExpenseLedger.push(logEntry);
-        syncLocalStorage();
-        
-        // Refresh UI Views immediately
-        renderLedgerTable();
-        calculateFinancialOverview();
-
-        // Flush form inputs
-        document.getElementById('searchItem').value = '';
-        document.getElementById('expenseAmount').value = '';
-        document.getElementById('expenseQty').value = '1';
-        
-        alert("✅ Expense Saved Locally!");
+        database.ref('expenses').push(logEntry)
+            .then(() => {
+                document.getElementById('searchItem').value = '';
+                document.getElementById('expenseAmount').value = '';
+                document.getElementById('expenseQty').value = '1';
+                alert("✅ Expense Saved to Cloud Database!");
+            })
+            .catch(err => alert("❌ Firebase Cloud Save Error: " + err.message));
     };
 
-    // Range report script logic - TOTAL EXPENSES (Uses Total Date Inputs)
+    // Range report total calculation logic
     document.getElementById('generateRangeTotalBtn').onclick = function() {
         const startVal = document.getElementById('startDateTotal').value;
         const endVal = document.getElementById('endDateTotal').value;
@@ -144,7 +159,7 @@ window.onload = function() {
         document.getElementById('analyticsResult').style.display = 'block';
     };
 
-    // Item specific summary filter analytics - SPECIFIC ITEM'S TOTAL EXPENSE (Uses Item Date Inputs)
+    // Item specific summary filter analytics
     document.getElementById('generateReportBtn').onclick = function() {
         const target = document.getElementById('analyticsItem').value.trim();
         if (!target) { alert('Select Item.'); return; }
@@ -172,27 +187,23 @@ window.onload = function() {
         document.getElementById('analyticsResult').style.display = 'block';
     };
 
-    // Complete System Data Reset Wipe
+    // Master Cloud Clear Reset Engine
     document.getElementById('masterResetBtn').onclick = function() {
-        if (confirm("⚠️ WIPE EVERYTHING? All offline data will be deleted.")) {
+        if (confirm("⚠️ WIPE EVERYTHING FROM CLOUD? This cannot be undone.")) {
             const pass = prompt("🔐 Enter Owner Password:");
             if (pass === OWNER_PASSWORD) {
-                globalExpenseLedger = [];
-                syncLocalStorage();
-                renderLedgerTable();
-                calculateFinancialOverview();
-                document.getElementById('analyticsResult').style.display = 'none';
-                alert("✅ Terminal Reset Successful.");
+                database.ref('expenses').remove()
+                    .then(() => {
+                        document.getElementById('analyticsResult').style.display = 'none';
+                        alert("✅ Cloud Database Reset Successful.");
+                    })
+                    .catch(err => alert("❌ Reset failed: " + err.message));
             } else if (pass !== null) { alert("❌ Wrong Password."); }
         }
     };
-
-    // Load initial parameters on render
-    renderLedgerTable();
-    calculateFinancialOverview();
 };
 
-// Search Suggestion Engine core dropdown compiler
+// Search Suggestion Dropdown Setup Core Engine
 function setupDropdown(inputId, arrowId, listId) {
     const inputEl = document.getElementById(inputId);
     const arrowEl = document.getElementById(arrowId);
@@ -204,7 +215,8 @@ function setupDropdown(inputId, arrowId, listId) {
         filteredArray.forEach(item => {
             const div = document.createElement('div');
             div.textContent = item;
-            div.addEventListener('mousedown', () => {
+            div.addEventListener('mousedown', (e) => {
+                e.preventDefault();
                 inputEl.value = item;
                 listEl.style.display = 'none';
             });
@@ -226,10 +238,11 @@ function setupDropdown(inputId, arrowId, listId) {
         else { renderList(itemNamesDatabase); }
     });
 
-    inputEl.addEventListener('blur', () => { setTimeout(() => listEl.style.display = 'none', 200); });
+    inputEl.addEventListener('blur', () => { 
+        setTimeout(() => { listEl.style.display = 'none'; }, 250); 
+    });
 }
 
-// Render dynamic log tables in drawer menu
 function renderLedgerTable() {
     const tbody = document.getElementById('expenseLogs');
     if (!tbody) return;
@@ -243,13 +256,12 @@ function renderLedgerTable() {
             <td><strong>${entry.name}</strong></td>
             <td>${entry.qty} ${entry.unit}</td>
             <td style="color:#51cf66;">₹${entry.amount.toFixed(2)}</td>
-            <td><button class="delete-btn" onclick="deleteExpense('${entry.id}')">×</button></td>
+            <td><button class="delete-btn" onclick="deleteExpense('${entry.firebaseId}')">×</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// Financial Counters calculation scripts for cards
 function calculateFinancialOverview() {
     const today = new Date();
     let dailySum = 0, monthlySum = 0;
