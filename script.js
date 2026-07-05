@@ -276,4 +276,5 @@ function calculateFinancialOverview() {
     const mEl = document.getElementById('monthlyExpense');
     if (dEl) dEl.textContent = `₹${dailySum.toFixed(2)}`;
     if (mEl) mEl.textContent = `₹${monthlySum.toFixed(2)}`;
+    
 }
