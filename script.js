@@ -1,22 +1,7 @@
-// Master Security Configuration
+// Master Security Configuration Password
 const OWNER_PASSWORD = "FW8473"; 
 
-// TODO: Apna real Firebase Config code yahan par update karein!
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "your-project.firebaseapp.com",
-    databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// Full Database Array List[cite: 1]
+// Pure Local Array Database
 const itemNamesDatabase = [
     "French Fries", "Veg patty", "Paneer Patty", "Chilli Potato Bites", 
     "Cheesy Corn Triangle", "Chicken Breast Strips", "Batata Vada", 
@@ -56,27 +41,158 @@ const itemNamesDatabase = [
     "Meal Container with lid", "Fries Box", "Peri Peri", "Cheese", "Tangy"
 ];
 
-let globalExpenseLedger = [];
-document.getElementById('expenseDate').valueAsDate = new Date();
+// Browser LocalStorage Cache Array Engine Loader
+let globalExpenseLedger = JSON.parse(localStorage.getItem('firstWaveExpenses')) || [];
 
-// 3 LINES HAMBURGER SIDE DRAWER INTERACTIVE TOGGLE SCRIPT
-const sideDrawer = document.getElementById('sideDrawer');
-const drawerOverlay = document.getElementById('drawerOverlay');
-
-document.getElementById('menuToggleBtn').addEventListener('click', () => {
-    sideDrawer.classList.add('open');
-    drawerOverlay.classList.add('open');
-});
-
-function closeDrawer() {
-    sideDrawer.classList.remove('open');
-    drawerOverlay.classList.remove('open');
+// Save Helper Engine
+function syncLocalStorage() {
+    localStorage.setItem('firstWaveExpenses', JSON.stringify(globalExpenseLedger));
 }
 
-document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
-drawerOverlay.addEventListener('click', closeDrawer);
+// Global scope functions so buttons can find them
+function closeDrawer() {
+    document.getElementById('sideDrawer').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+}
 
-// Custom Search Dropdown Component Engine
+function deleteExpense(id) {
+    if (confirm("❌ Entry Delete karni hai?")) {
+        const enteredPassword = prompt("🔐 Enter Owner Password to delete:");
+        if (enteredPassword === OWNER_PASSWORD) {
+            globalExpenseLedger = globalExpenseLedger.filter(item => item.id !== id);
+            syncLocalStorage();
+            renderLedgerTable();
+            calculateFinancialOverview();
+            alert("✅ Entry Successfully Deleted.");
+        } else if (enteredPassword !== null) {
+            alert("❌ Galat Password.");
+        }
+    }
+}
+
+// Main Window Initializer Engine
+window.onload = function() {
+    // Current date filter loader
+    document.getElementById('expenseDate').valueAsDate = new Date();
+    
+    // Setup Custom Search Filters
+    setupDropdown('searchItem', 'dropdownArrowBtn', 'dropdownList');
+    setupDropdown('analyticsItem', 'analyticsArrowBtn', 'analyticsDropdownList');
+
+    // Drawer Core Controls
+    document.getElementById('menuToggleBtn').onclick = function() {
+        document.getElementById('sideDrawer').classList.add('open');
+        document.getElementById('drawerOverlay').classList.add('open');
+    };
+    document.getElementById('closeDrawerBtn').onclick = closeDrawer;
+    document.getElementById('drawerOverlay').onclick = closeDrawer;
+
+    // LOCAL STORAGE WRITE: SAVE EXPENSE ACTION KEY
+    document.getElementById('addExpenseBtn').onclick = function() {
+        const name = document.getElementById('searchItem').value.trim();
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+        const qty = parseInt(document.getElementById('expenseQty').value);
+        const unit = document.getElementById('expenseUnit').value;
+        const dateStr = document.getElementById('expenseDate').value;
+
+        if (!name || isNaN(amount) || amount <= 0 || isNaN(qty) || qty <= 0 || !dateStr) {
+            alert('Please fill all parameters correctly before saving.');
+            return;
+        }
+
+        const logEntry = {
+            id: "ID_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+            name: name,
+            amount: amount,
+            qty: qty,
+            unit: unit,
+            date: dateStr
+        };
+        
+        globalExpenseLedger.push(logEntry);
+        syncLocalStorage();
+        
+        // Refresh UI Views immediately
+        renderLedgerTable();
+        calculateFinancialOverview();
+
+        // Flush form inputs
+        document.getElementById('searchItem').value = '';
+        document.getElementById('expenseAmount').value = '';
+        document.getElementById('expenseQty').value = '1';
+        
+        alert("✅ Expense Saved Locally!");
+    };
+
+    // Range report script logic
+    document.getElementById('generateRangeTotalBtn').onclick = function() {
+        const startVal = document.getElementById('startDate').value;
+        const endVal = document.getElementById('endDate').value;
+        if (!startVal || !endVal) { alert('Select Dates.'); return; }
+        
+        const start = new Date(startVal).setHours(0,0,0,0);
+        const end = new Date(endVal).setHours(23,59,59,999);
+        
+        let total = 0;
+        globalExpenseLedger.forEach(e => {
+            const d = new Date(e.date).getTime();
+            if (d >= start && d <= end) total += e.amount;
+        });
+
+        document.getElementById('reportTitleHeader').innerText = `📊 Total Report`;
+        document.getElementById('reportMetricsOutput').innerHTML = `<p>Cost: <span class="metric-highlight">₹${total.toFixed(2)}</span></p>`;
+        document.getElementById('analyticsResult').style.display = 'block';
+    };
+
+    // Item specific summary filter analytics
+    document.getElementById('generateReportBtn').onclick = function() {
+        const target = document.getElementById('analyticsItem').value.trim();
+        if (!target) { alert('Select Item.'); return; }
+        
+        const startVal = document.getElementById('startDate').value;
+        const endVal = document.getElementById('endDate').value;
+        const start = startVal ? new Date(startVal).setHours(0,0,0,0) : null;
+        const end = endVal ? new Date(endVal).setHours(23,59,59,999) : null;
+
+        let cost = 0, qty = 0, unt = '';
+        globalExpenseLedger.forEach(e => {
+            if (e.name.toLowerCase() === target.toLowerCase()) {
+                const d = new Date(e.date).getTime();
+                if ((!start || d >= start) && (!end || d <= end)) {
+                    cost += e.amount; qty += e.qty; unt = e.unit;
+                }
+            }
+        });
+
+        document.getElementById('reportTitleHeader').innerText = `🔍 Item Analysis`;
+        document.getElementById('reportMetricsOutput').innerHTML = `
+            <p>Spent: <span class="metric-highlight">₹${cost.toFixed(2)}</span></p>
+            <p>Total Qty: <span class="metric-highlight">${qty} ${unt || 'units'}</span></p>
+        `;
+        document.getElementById('analyticsResult').style.display = 'block';
+    };
+
+    // Complete System Data Reset Wipe
+    document.getElementById('masterResetBtn').onclick = function() {
+        if (confirm("⚠️ WIPE EVERYTHING? All offline data will be deleted.")) {
+            const pass = prompt("🔐 Enter Owner Password:");
+            if (pass === OWNER_PASSWORD) {
+                globalExpenseLedger = [];
+                syncLocalStorage();
+                renderLedgerTable();
+                calculateFinancialOverview();
+                document.getElementById('analyticsResult').style.display = 'none';
+                alert("✅ Terminal Reset Successful.");
+            } else if (pass !== null) { alert("❌ Wrong Password."); }
+        }
+    };
+
+    // Load initial parameters on render
+    renderLedgerTable();
+    calculateFinancialOverview();
+};
+
+// Search Suggestion Engine core dropdown compiler
 function setupDropdown(inputId, arrowId, listId) {
     const inputEl = document.getElementById(inputId);
     const arrowEl = document.getElementById(arrowId);
@@ -113,151 +229,39 @@ function setupDropdown(inputId, arrowId, listId) {
     inputEl.addEventListener('blur', () => { setTimeout(() => listEl.style.display = 'none', 200); });
 }
 
-setupDropdown('searchItem', 'dropdownArrowBtn', 'dropdownList');
-setupDropdown('analyticsItem', 'analyticsArrowBtn', 'analyticsDropdownList');
-
-// REALTIME DATABASE CLOUD AUTO-SYNC
-database.ref('expenses').on('value', (snapshot) => {
-    const data = snapshot.val();
-    globalExpenseLedger = [];
-    if (data) {
-        Object.keys(data).forEach(key => {
-            globalExpenseLedger.push({ id: key, ...data[key] });
-        });
-    }
-    renderLedgerTable();
-    calculateFinancialOverview();
-});
-
-// Save Entry Function
-document.getElementById('addExpenseBtn').addEventListener('click', () => {
-    const name = document.getElementById('searchItem').value.trim();
-    const amount = parseFloat(document.getElementById('expenseAmount').value);
-    const qty = parseInt(document.getElementById('expenseQty').value);
-    const unit = document.getElementById('expenseUnit').value;
-    const dateStr = document.getElementById('expenseDate').value;
-
-    if (!name || isNaN(amount) || amount <= 0 || isNaN(qty) || qty <= 0 || !dateStr) {
-        alert('Please fill out all input spaces correctly.');
-        return;
-    }
-
-    const logEntry = { name, amount, qty, unit, date: dateStr };
-    
-    database.ref('expenses').push(logEntry)
-    .then(() => {
-        document.getElementById('searchItem').value = '';
-        document.getElementById('expenseAmount').value = '';
-        document.getElementById('expenseQty').value = '1';
-    })
-    .catch(err => alert("Error: " + err.message));
-});
-
-// Secure Delete Single Entry Function
-function deleteExpense(id) {
-    if (confirm("❌ Delete entry?")) {
-        const enteredPassword = prompt("🔐 Enter Owner Password to delete:");
-        if (enteredPassword === OWNER_PASSWORD) {
-            database.ref('expenses/' + id).remove()
-            .then(() => alert("✅ Deleted."))
-            .catch(err => alert("Error: " + err.message));
-        } else if (enteredPassword !== null) {
-            alert("❌ Galat Password.");
-        }
-    }
-}
-
-// Render Table Data inside Drawer
+// Render dynamic log tables in drawer menu
 function renderLedgerTable() {
     const tbody = document.getElementById('expenseLogs');
+    if (!tbody) return;
     tbody.innerHTML = '';
+    
     const sorted = [...globalExpenseLedger].sort((a, b) => new Date(b.date) - new Date(a.date));
     sorted.forEach(entry => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${new Date(entry.date).toLocaleDateString('en-IN')}</td>
             <td><strong>${entry.name}</strong></td>
-            <td>${entry.qty}${entry.unit}</td>
-            <td style="color:#51cf66;">₹${entry.amount}</td>
+            <td>${entry.qty} ${entry.unit}</td>
+            <td style="color:#51cf66;">₹${entry.amount.toFixed(2)}</td>
             <td><button class="delete-btn" onclick="deleteExpense('${entry.id}')">×</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// Stats Counter Setup
+// Financial Counters calculation scripts for cards
 function calculateFinancialOverview() {
     const today = new Date();
     let dailySum = 0, monthlySum = 0;
+    
     globalExpenseLedger.forEach(entry => {
         const entryDate = new Date(entry.date);
         if (entryDate.toDateString() === today.toDateString()) dailySum += entry.amount;
         if (entryDate.getMonth() === today.getMonth() && entryDate.getFullYear() === today.getFullYear()) monthlySum += entry.amount;
     });
-    document.getElementById('dailyExpense').textContent = `₹${dailySum.toFixed(2)}`;
-    document.getElementById('monthlyExpense').textContent = `₹${monthlySum.toFixed(2)}`;
-}
-
-// Reports Range Helper
-function getDateLimits() {
-    return {
-        start: document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null,
-        end: document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null
-    };
-}
-
-// Report 1: Calculate Range Total
-document.getElementById('generateRangeTotalBtn').addEventListener('click', () => {
-    const { start, end } = getDateLimits();
-    if (!start || !end) { alert('Select Dates.'); return; }
-    start.setHours(0,0,0,0); end.setHours(23,59,59,999);
     
-    let total = 0;
-    globalExpenseLedger.forEach(e => {
-        const d = new Date(e.date);
-        if (d >= start && d <= end) total += e.amount;
-    });
-
-    document.getElementById('reportTitleHeader').innerText = `📊 Total Report`;
-    document.getElementById('reportMetricsOutput').innerHTML = `<p>Cost: <span class="metric-highlight">₹${total.toFixed(2)}</span></p>`;
-    document.getElementById('analyticsResult').style.display = 'block';
-});
-
-// Report 2: Item Specific Deep Analysis
-document.getElementById('generateReportBtn').addEventListener('click', () => {
-    const target = document.getElementById('analyticsItem').value.trim();
-    if (!target) { alert('Select Item.'); return; }
-    const { start, end } = getDateLimits();
-    if (start) start.setHours(0,0,0,0); if (end) end.setHours(23,59,59,999);
-
-    let cost = 0, qty = 0, unt = '';
-    globalExpenseLedger.forEach(e => {
-        if (e.name.toLowerCase() === target.toLowerCase()) {
-            const d = new Date(e.date);
-            if ((!start || d >= start) && (!end || d <= end)) {
-                cost += e.amount; qty += e.qty; unt = e.unit;
-            }
-        }
-    });
-
-    document.getElementById('reportTitleHeader').innerText = `🔍 Item Analysis`;
-    document.getElementById('reportMetricsOutput').innerHTML = `
-        <p>Spent: <span class="metric-highlight">₹${cost.toFixed(2)}</span></p>
-        <p>Total Qty: <span class="metric-highlight">${qty} ${unt}</span></p>
-    `;
-    document.getElementById('analyticsResult').style.display = 'block';
-});
-
-// Master Password Reset
-document.getElementById('masterResetBtn').addEventListener('click', () => {
-    if (confirm("⚠️ WIPE EVERYTHING?")) {
-        const pass = prompt("🔐 Enter Owner Password:");
-        if (pass === OWNER_PASSWORD) {
-            database.ref('expenses').remove()
-            .then(() => {
-                document.getElementById('analyticsResult').style.display = 'none';
-                alert("✅ Cloud Reset Done.");
-            });
-        } else if (pass !== null) { alert("❌ Access Denied."); }
-    }
-});
+    const dEl = document.getElementById('dailyExpense');
+    const mEl = document.getElementById('monthlyExpense');
+    if (dEl) dEl.textContent = `₹${dailySum.toFixed(2)}`;
+    if (mEl) mEl.textContent = `₹${monthlySum.toFixed(2)}`;
+}
