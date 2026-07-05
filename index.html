@@ -3,160 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Wave Fries - Advanced Expense Analytics Terminal</title>
+    <title>First Wave Fries - Clean Terminal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <!-- Header with Branding Logo -->
-    <header>
-        <img src="HD Logo.jpg" alt="First Wave Fries Logo" class="brand-logo">
-        <h1>FIRST WAVE FRIES</h1>
-        <p class="subtitle">Expense Management & Analytics Terminal</p>
-    </header>
+<!-- Top Navigation Bar (Premium Look) -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="HD Logo.jpg" alt="Logo" class="nav-logo">
+        <span>First Wave Fries</span>
+    </div>
+    <!-- 3 Lines Toggle Button (Hamburger Menu) -->
+    <button type="button" id="menuToggleBtn" class="menu-toggle-btn">☰</button>
+</nav>
 
-    <!-- Dashboard Cards Section -->
-    <div class="summary-grid">
-        <div class="summary-card daily-card">
-            <h3>Daily Expenses</h3>
-            <p id="dailyExpense">₹0.00</p>
+<div class="container">
+    
+    <!-- Quick Stats Overview Row -->
+    <div class="mini-stats-grid">
+        <div class="stat-box">
+            <span class="stat-label">Today:</span>
+            <span id="dailyExpense" class="stat-value">₹0.00</span>
         </div>
-        <div class="summary-card monthly-card">
-            <h3>Monthly Expenses</h3>
-            <p id="monthlyExpense">₹0.00</p>
+        <div class="stat-box">
+            <span class="stat-label">This Month:</span>
+            <span id="monthlyExpense" class="stat-value">₹0.00</span>
         </div>
     </div>
 
-    <!-- Expense Entry Form (Super Colorful Input Fields) -->
-    <div class="card interface-section">
-        <h2 class="section-title">New Expense Entry</h2>
-        <div class="form-grid">
-            <!-- Search field with Dropdown Arrow -->
-            <div class="form-group col-span-2">
-                <label for="searchItem">Select Item Name</label>
-                <div class="search-container">
-                    <input type="text" id="searchItem" class="input-colorful item-input" placeholder="🍔 Search item name or click arrow..." autocomplete="off">
-                    <button type="button" id="dropdownArrowBtn" class="arrow-btn">▼</button>
-                    <div id="dropdownList" class="dropdown-suggestions"></div>
-                </div>
+    <!-- MAIN INTERFACE: Only New Expense Entry is Visible Now -->
+    <main class="main-content">
+        <div class="card entry-card">
+            <div class="card-header-yellow">
+                <h2>NEW EXPENSE ENTRY</h2>
             </div>
             
-            <div class="form-group">
-                <label for="expenseAmount">Amount (₹)</label>
-                <input type="number" id="expenseAmount" class="input-colorful amount-input" placeholder="💰 0.00" min="0">
-            </div>
-
-            <!-- Quantity & Unit Row Combined -->
-            <div class="form-group qty-unit-group">
-                <label>Quantity & Unit</label>
-                <div class="qty-unit-wrapper">
-                    <input type="number" id="expenseQty" class="input-colorful qty-input" placeholder="Qty" min="1" value="1">
-                    <select id="expenseUnit" class="select-colorful unit-select">
-                        <option value="piece">piece</option>
-                        <option value="Gm">Gm</option>
-                        <option value="kg">kg</option>
-                        <option value="litre">litre</option>
-                        <option value="ml">ml</option>
-                        <option value="packet">packet</option>
-                        <option value="can">can</option>
-                        <option value="box">box</option>
-                        <option value="nos">nos</option>
-                        <option value="pkt">pkt</option>
-                        <option value="tr">tr</option>
-                    </select>
+            <div class="form-body">
+                <div class="form-group full-width">
+                    <label for="searchItem">Select Item Name</label>
+                    <div class="search-container">
+                        <input type="text" id="searchItem" class="input-field" placeholder="🍔 Search item name..." autocomplete="off">
+                        <button type="button" id="dropdownArrowBtn" class="arrow-btn">▼</button>
+                        <div id="dropdownList" class="dropdown-suggestions"></div>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="form-row-three">
+                    <div class="form-group">
+                        <label for="expenseAmount">Amount (₹)</label>
+                        <input type="number" id="expenseAmount" class="input-field highlight-amount" placeholder="0.00" min="0">
+                    </div>
 
-            <div class="form-group">
-                <label for="expenseDate">Date</label>
-                <input type="date" id="expenseDate" class="input-colorful date-input">
-            </div>
-        </div>
-        <button type="button" id="addExpenseBtn" class="btn btn-primary">Save Expense</button>
-    </div>
+                    <div class="form-group">
+                        <label>Qty & Unit</label>
+                        <div class="qty-unit-wrapper">
+                            <input type="number" id="expenseQty" class="input-field" placeholder="Qty" min="1" value="1">
+                            <select id="expenseUnit" class="select-field">
+                                <option value="piece">piece</option>
+                                <option value="Gm">Gm</option>
+                                <option value="kg">kg</option>
+                                <option value="litre">litre</option>
+                                <option value="ml">ml</option>
+                                <option value="packet">packet</option>
+                                <option value="can">can</option>
+                                <option value="box">box</option>
+                                <option value="nos">nos</option>
+                                <option value="pkt">pkt</option>
+                                <option value="tr">tr</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <!-- Expense Logs Table with Scrollbar -->
-    <div class="card logs-section">
-        <h2 class="section-title">Expense Ledger</h2>
-        <div class="table-scroll-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Item Name</th>
-                        <th>Quantity & Unit</th>
-                        <th>Cost Amount</th>
-                        <th style="width: 80px; text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="expenseLogs">
-                    <!-- Logs dynamically added -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Advanced Analytics & Date Filtering Box -->
-    <div class="card analytics-section">
-        <h2 class="section-title">Business Insights & Reports Panel</h2>
-        
-        <!-- Date Selector Row Shared across analytics functions -->
-        <div class="filter-grid">
-            <div class="form-group">
-                <label for="startDate">From Date (Start)</label>
-                <input type="date" id="startDate" class="input-colorful report-date-input">
-            </div>
-            <div class="form-group">
-                <label for="endDate">To Date (End)</label>
-                <input type="date" id="endDate" class="input-colorful report-date-input">
-            </div>
-        </div>
-
-        <div class="action-grid-buttons">
-            <!-- Button 1: Full Range Expenses -->
-            <button type="button" id="generateRangeTotalBtn" class="btn btn-secondary range-btn">Calculate Overall Date-Range Total</button>
-        </div>
-
-        <hr class="section-divider">
-
-        <!-- Specific Item Segment Box -->
-        <div class="filter-grid" style="margin-top: 15px;">
-            <div class="form-group col-span-2">
-                <label for="analyticsItem">Select Target Item for Deep Analysis</label>
-                <div class="search-container">
-                    <input type="text" id="analyticsItem" class="input-colorful report-input" placeholder="🔍 Type item name to calculate counts..." autocomplete="off">
-                    <button type="button" id="analyticsArrowBtn" class="arrow-btn">▼</button>
-                    <div id="analyticsDropdownList" class="dropdown-suggestions"></div>
+                    <div class="form-group">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate" class="input-field">
+                    </div>
                 </div>
+
+                <button type="button" id="addExpenseBtn" class="btn-submit">SAVE EXPENSE ENTRY</button>
             </div>
         </div>
-        
-        <button type="button" id="generateReportBtn" class="btn btn-secondary specific-btn">Analyze Specific Item (Filtered by Date)</button>
-
-        <!-- Dynamic Output Metrics Block -->
-        <div id="analyticsResult" class="analytics-result-box" style="display: none;">
-            <h4 id="reportTitleHeader">Analysis Output Summary</h4>
-            <div id="reportMetricsOutput">
-                <!-- Javascript will inject metrics layout here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Master Reset Control Security Area -->
-    <div class="card reset-security-section" style="border: 2px dashed #ffc9c9; background: #fff5f5; text-align: center;">
-        <h2 class="section-title" style="border-left-color: #e03131; color: #c92a2a;">Master Database Control</h2>
-        <p style="font-size: 13px; color: #868e96; margin-bottom: 15px;">Warning: This action will permanently erase all ledger data history. Requires Owner Authentication.</p>
-        <button type="button" id="masterResetBtn" class="btn master-reset-btn">Wipe & Reset Terminal</button>
-    </div>
-
-    <!-- Footer Copyright -->
-    <footer>
-        <p>© 2026 First Wave Fries. All Rights Reserved.</p>
-        <p class="credit">System Architecture & Design managed by: <strong>@ krishna</strong></p>
-    </footer>
+    </main>
 </div>
 
+<!-- SLIDE-OUT SIDE PANEL: Hidden inside the 3 lines menu -->
+<div id="sideDrawer" class="side-drawer">
+    <div class="drawer-header">
+        <h3>Terminal Options</h3>
+        <button type="button" id="closeDrawerBtn" class="close-drawer-btn">×</button>
+    </div>
+    
+    <div class="drawer-content">
+        <!-- CATEGORY 1: LOGS & HISTORY -->
+        <div class="drawer-category">
+            <h4 class="category-title">📂 Category 1: Expense Ledger</h4>
+            <div class="table-scroll-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseLogs">
+                        <!-- Dynamic Logs -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CATEGORY 2: BUSINESS INSIGHTS & REPORTS -->
+        <div class="drawer-category">
+            <h4 class="category-title">📊 Category 2: Insights & Reports</h4>
+            <div class="filter-box">
+                <div class="date-row">
+                    <input type="date" id="startDate" class="drawer-input" placeholder="From">
+                    <input type="date" id="endDate" class="drawer-input" placeholder="To">
+                </div>
+                <button type="button" id="generateRangeTotalBtn" class="drawer-btn btn-green">Calculate Range Total</button>
+                
+                <div class="search-container" style="margin-top: 15px;">
+                    <input type="text" id="analyticsItem" class="drawer-input" placeholder="🔍 Type item for deep analysis..." autocomplete="off">
+                    <button type="button" id="analyticsArrowBtn" class="arrow-btn" style="color: white;">▼</button>
+                    <div id="analyticsDropdownList" class="dropdown-suggestions"></div>
+                </div>
+                <button type="button" id="generateReportBtn" class="drawer-btn btn-yellow" style="margin-top: 10px; color: black;">Analyze Specific Item</button>
+
+                <div id="analyticsResult" class="drawer-result-box" style="display: none;">
+                    <h5 id="reportTitleHeader">Summary</h5>
+                    <div id="reportMetricsOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY 3: SECURITY CONTROLS -->
+        <div class="drawer-category secure-zone">
+            <h4 class="category-title" style="color: #ff6b6b;">🔒 Category 3: System Security</h4>
+            <p>Delete all history permanent reset.</p>
+            <button type="button" id="masterResetBtn" class="drawer-btn btn-red">Wipe & Reset Terminal</button>
+        </div>
+    </div>
+</div>
+
+<!-- Background overlay when menu is open -->
+<div id="drawerOverlay" class="drawer-overlay"></div>
+
+<!-- Firebase SDK Links -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

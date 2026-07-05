@@ -1,7 +1,22 @@
-// Master Security Configuration (Updated Password)
+// Master Security Configuration
 const OWNER_PASSWORD = "FW8473"; 
 
-// Clean Array List containing pure text strings[cite: 1]
+// TODO: Apna real Firebase Config code yahan par update karein!
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project.firebaseapp.com",
+    databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Full Database Array List[cite: 1]
 const itemNamesDatabase = [
     "French Fries", "Veg patty", "Paneer Patty", "Chilli Potato Bites", 
     "Cheesy Corn Triangle", "Chicken Breast Strips", "Batata Vada", 
@@ -11,7 +26,7 @@ const itemNamesDatabase = [
     "Strawberry Ice Cream (lite)", "Mango Ice cream (lite)", 
     "Chocolate Ice cream (lite)", "Hide and seek (Biscuit)", "Oreo Biscuit", 
     "Paper Napkins", "Cooking Oil (Sunflower)", "Milk (Greeen)", 
-    "Ice cubes (10kg)", "Cheese slice", "Lettuce (Iceberg)", "Tomato (Red)", 
+    "Ice cubes (10kg)", "Cheese slice", "Lettcue (Iceberg)", "Tomato (Red)", 
     "Salt", "Carrot (Thik One)", "Cabbage", "Onion (Big)", 
     "Green Chilli (Thin one) (For Salsa)", "Green Chilli (Thick one) (For Vada Pavs)", 
     "Tutti Frutti", "Cashew Nuts (Roasted Unsalted)", "Sweet Dried Grapes", 
@@ -41,11 +56,25 @@ const itemNamesDatabase = [
     "Meal Container with lid", "Fries Box", "Peri Peri", "Cheese", "Tangy"
 ];
 
-// LocalStorage Engine Initialisation Array Load
-let globalExpenseLedger = JSON.parse(localStorage.getItem('firstWaveExpenses')) || [];
-
-// Set default fallback dates inside logging fields
+let globalExpenseLedger = [];
 document.getElementById('expenseDate').valueAsDate = new Date();
+
+// 3 LINES HAMBURGER SIDE DRAWER INTERACTIVE TOGGLE SCRIPT
+const sideDrawer = document.getElementById('sideDrawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+
+document.getElementById('menuToggleBtn').addEventListener('click', () => {
+    sideDrawer.classList.add('open');
+    drawerOverlay.classList.add('open');
+});
+
+function closeDrawer() {
+    sideDrawer.classList.remove('open');
+    drawerOverlay.classList.remove('open');
+}
+
+document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
 
 // Custom Search Dropdown Component Engine
 function setupDropdown(inputId, arrowId, listId) {
@@ -55,10 +84,7 @@ function setupDropdown(inputId, arrowId, listId) {
 
     function renderList(filteredArray) {
         listEl.innerHTML = '';
-        if (filteredArray.length === 0) {
-            listEl.style.display = 'none';
-            return;
-        }
+        if (filteredArray.length === 0) { listEl.style.display = 'none'; return; }
         filteredArray.forEach(item => {
             const div = document.createElement('div');
             div.textContent = item;
@@ -80,28 +106,30 @@ function setupDropdown(inputId, arrowId, listId) {
 
     arrowEl.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (listEl.style.display === 'block') {
-            listEl.style.display = 'none';
-        } else {
-            renderList(itemNamesDatabase);
-        }
+        if (listEl.style.display === 'block') { listEl.style.display = 'none'; } 
+        else { renderList(itemNamesDatabase); }
     });
 
-    inputEl.addEventListener('blur', () => {
-        setTimeout(() => listEl.style.display = 'none', 200);
-    });
+    inputEl.addEventListener('blur', () => { setTimeout(() => listEl.style.display = 'none', 200); });
 }
 
-// Attach listeners
 setupDropdown('searchItem', 'dropdownArrowBtn', 'dropdownList');
 setupDropdown('analyticsItem', 'analyticsArrowBtn', 'analyticsDropdownList');
 
-// LocalStorage Synchronization Wrapper
-function syncWithLocalStorage() {
-    localStorage.setItem('firstWaveExpenses', JSON.stringify(globalExpenseLedger));
-}
+// REALTIME DATABASE CLOUD AUTO-SYNC
+database.ref('expenses').on('value', (snapshot) => {
+    const data = snapshot.val();
+    globalExpenseLedger = [];
+    if (data) {
+        Object.keys(data).forEach(key => {
+            globalExpenseLedger.push({ id: key, ...data[key] });
+        });
+    }
+    renderLedgerTable();
+    calculateFinancialOverview();
+});
 
-// Add Expense Entry Submission Handler
+// Save Entry Function
 document.getElementById('addExpenseBtn').addEventListener('click', () => {
     const name = document.getElementById('searchItem').value.trim();
     const amount = parseFloat(document.getElementById('expenseAmount').value);
@@ -110,222 +138,126 @@ document.getElementById('addExpenseBtn').addEventListener('click', () => {
     const dateStr = document.getElementById('expenseDate').value;
 
     if (!name || isNaN(amount) || amount <= 0 || isNaN(qty) || qty <= 0 || !dateStr) {
-        alert('Please fill out all colorful input spaces accurately.');
+        alert('Please fill out all input spaces correctly.');
         return;
     }
 
-    const logEntry = {
-        id: Date.now().toString(),
-        name,
-        amount,
-        qty,
-        unit,
-        date: dateStr
-    };
+    const logEntry = { name, amount, qty, unit, date: dateStr };
     
-    globalExpenseLedger.push(logEntry);
-    
-    syncWithLocalStorage();
-    renderLedgerTable();
-    calculateFinancialOverview();
-
-    // Reset Form Input Box entries
-    document.getElementById('searchItem').value = '';
-    document.getElementById('expenseAmount').value = '';
-    document.getElementById('expenseQty').value = '1';
-    document.getElementById('expenseUnit').selectedIndex = 0;
+    database.ref('expenses').push(logEntry)
+    .then(() => {
+        document.getElementById('searchItem').value = '';
+        document.getElementById('expenseAmount').value = '';
+        document.getElementById('expenseQty').value = '1';
+    })
+    .catch(err => alert("Error: " + err.message));
 });
 
-// Single Item Deletion Execution with Password Protection
+// Secure Delete Single Entry Function
 function deleteExpense(id) {
-    const firstConfirm = confirm("❌ Kya aap is entry ko delete karna chahte hain?");
-    if (firstConfirm) {
-        const enteredPassword = prompt("🔐 Authenticate: Delete karne ke liye Owner Password dalein:");
-        
-        if (enteredPassword === null) return; // Cancel handle
-
+    if (confirm("❌ Delete entry?")) {
+        const enteredPassword = prompt("🔐 Enter Owner Password to delete:");
         if (enteredPassword === OWNER_PASSWORD) {
-            globalExpenseLedger = globalExpenseLedger.filter(item => item.id !== id);
-            syncWithLocalStorage();
-            renderLedgerTable();
-            calculateFinancialOverview();
-            alert("✅ Entry successfully deleted.");
-        } else {
-            alert("❌ Access Denied! Galat Password. Data safe hai.");
+            database.ref('expenses/' + id).remove()
+            .then(() => alert("✅ Deleted."))
+            .catch(err => alert("Error: " + err.message));
+        } else if (enteredPassword !== null) {
+            alert("❌ Galat Password.");
         }
     }
 }
 
-// Render Data to Table Dom
+// Render Table Data inside Drawer
 function renderLedgerTable() {
     const tbody = document.getElementById('expenseLogs');
     tbody.innerHTML = '';
-    
     const sorted = [...globalExpenseLedger].sort((a, b) => new Date(b.date) - new Date(a.date));
-    
     sorted.forEach(entry => {
         const tr = document.createElement('tr');
-        const formattedDate = new Date(entry.date).toLocaleDateString('en-IN');
         tr.innerHTML = `
-            <td>${formattedDate}</td>
+            <td>${new Date(entry.date).toLocaleDateString('en-IN')}</td>
             <td><strong>${entry.name}</strong></td>
-            <td>${entry.qty} ${entry.unit}</td>
-            <td>₹${entry.amount.toFixed(2)}</td>
-            <td style="text-align: center;">
-                <button class="delete-btn" onclick="deleteExpense('${entry.id}')">Delete</button>
-            </td>
+            <td>${entry.qty}${entry.unit}</td>
+            <td style="color:#51cf66;">₹${entry.amount}</td>
+            <td><button class="delete-btn" onclick="deleteExpense('${entry.id}')">×</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// Home Counter Interface Calculations (Daily and Monthly sums)
+// Stats Counter Setup
 function calculateFinancialOverview() {
     const today = new Date();
-    let dailySum = 0;
-    let monthlySum = 0;
-
+    let dailySum = 0, monthlySum = 0;
     globalExpenseLedger.forEach(entry => {
         const entryDate = new Date(entry.date);
-        
-        if (entryDate.getDate() === today.getDate() && 
-            entryDate.getMonth() === today.getMonth() && 
-            entryDate.getFullYear() === today.getFullYear()) {
-            dailySum += entry.amount;
-        }
-
-        if (entryDate.getMonth() === today.getMonth() && 
-            entryDate.getFullYear() === today.getFullYear()) {
-            monthlySum += entry.amount;
-        }
+        if (entryDate.toDateString() === today.toDateString()) dailySum += entry.amount;
+        if (entryDate.getMonth() === today.getMonth() && entryDate.getFullYear() === today.getFullYear()) monthlySum += entry.amount;
     });
-
     document.getElementById('dailyExpense').textContent = `₹${dailySum.toFixed(2)}`;
     document.getElementById('monthlyExpense').textContent = `₹${monthlySum.toFixed(2)}`;
 }
 
-// Utility Helper to calculate normalized date range constraints safely
-function getDateRangeLimits() {
-    const startVal = document.getElementById('startDate').value;
-    const endVal = document.getElementById('endDate').value;
-    
-    const startLimit = startVal ? new Date(startVal) : null;
-    const endLimit = endVal ? new Date(endVal) : null;
-    
-    if (startLimit) startLimit.setHours(0, 0, 0, 0);
-    if (endLimit) endLimit.setHours(23, 59, 59, 999);
-    
-    return { startLimit, endLimit, startVal, endVal };
+// Reports Range Helper
+function getDateLimits() {
+    return {
+        start: document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null,
+        end: document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null
+    };
 }
 
-// REPORT GENERATOR TYPE 1: Date-Range Total Business Expense Calculator Engine
+// Report 1: Calculate Range Total
 document.getElementById('generateRangeTotalBtn').addEventListener('click', () => {
-    const { startLimit, endLimit, startVal, endVal } = getDateRangeLimits();
+    const { start, end } = getDateLimits();
+    if (!start || !end) { alert('Select Dates.'); return; }
+    start.setHours(0,0,0,0); end.setHours(23,59,59,999);
     
-    if (!startVal || !endVal) {
-        alert('Please specify both Start and End Dates to calculate range overview expenses.');
-        return;
-    }
-
-    let overallRangeTotal = 0;
-
-    globalExpenseLedger.forEach(entry => {
-        const entryDate = new Date(entry.date);
-        let passDate = true;
-        if (startLimit && entryDate < startLimit) passDate = false;
-        if (endLimit && entryDate > endLimit) passDate = false;
-
-        if (passDate) {
-            overallRangeTotal += entry.amount;
-        }
+    let total = 0;
+    globalExpenseLedger.forEach(e => {
+        const d = new Date(e.date);
+        if (d >= start && d <= end) total += e.amount;
     });
 
-    // Populate Report view elements
-    document.getElementById('reportTitleHeader').innerText = `📊 Overall Total Expense Report`;
-    const container = document.getElementById('reportMetricsOutput');
-    container.innerHTML = `
-        <p>Selected Range: <strong>${new Date(startVal).toLocaleDateString('en-IN')}</strong> to <strong>${new Date(endVal).toLocaleDateString('en-IN')}</strong></p>
-        <p style="margin-top:10px; font-size:18px;">Total Combined Kharcha: <span class="metric-highlight">₹${overallRangeTotal.toFixed(2)}</span></p>
-    `;
+    document.getElementById('reportTitleHeader').innerText = `📊 Total Report`;
+    document.getElementById('reportMetricsOutput').innerHTML = `<p>Cost: <span class="metric-highlight">₹${total.toFixed(2)}</span></p>`;
     document.getElementById('analyticsResult').style.display = 'block';
 });
 
-// REPORT GENERATOR TYPE 2: Specific Single Item Analysis Filter
+// Report 2: Item Specific Deep Analysis
 document.getElementById('generateReportBtn').addEventListener('click', () => {
-    const targetItem = document.getElementById('analyticsItem').value.trim();
-    const { startLimit, endLimit, startVal, endVal } = getDateRangeLimits();
+    const target = document.getElementById('analyticsItem').value.trim();
+    if (!target) { alert('Select Item.'); return; }
+    const { start, end } = getDateLimits();
+    if (start) start.setHours(0,0,0,0); if (end) end.setHours(23,59,59,999);
 
-    if (!targetItem) {
-        alert('Please select or search a Target Item for deep breakdown analysis.');
-        return;
-    }
-
-    let evaluatedCost = 0;
-    let unitSummaries = {};
-
-    globalExpenseLedger.forEach(entry => {
-        if (entry.name.toLowerCase() === targetItem.toLowerCase()) {
-            const entryDate = new Date(entry.date);
-            let passDate = true;
-            if (startLimit && entryDate < startLimit) passDate = false;
-            if (endLimit && entryDate > endLimit) passDate = false;
-
-            if (passDate) {
-                evaluatedCost += entry.amount;
-                if (!unitSummaries[entry.unit]) {
-                    unitSummaries[entry.unit] = 0;
-                }
-                unitSummaries[entry.unit] += entry.qty;
+    let cost = 0, qty = 0, unt = '';
+    globalExpenseLedger.forEach(e => {
+        if (e.name.toLowerCase() === target.toLowerCase()) {
+            const d = new Date(e.date);
+            if ((!start || d >= start) && (!end || d <= end)) {
+                cost += e.amount; qty += e.qty; unt = e.unit;
             }
         }
     });
 
-    let qtyString = Object.keys(unitSummaries).length > 0 
-        ? Object.entries(unitSummaries).map(([unit, val]) => `${val} ${unit}`).join(', ')
-        : "0 Units";
-
-    // Build the dynamic specific view presentation
-    document.getElementById('reportTitleHeader').innerText = `🔍 Specific Item Analytical Output: "${targetItem}"`;
-    const container = document.getElementById('reportMetricsOutput');
-    
-    let dateRangeText = (startVal && endVal) 
-        ? `${new Date(startVal).toLocaleDateString('en-IN')} to ${new Date(endVal).toLocaleDateString('en-IN')}`
-        : "Lifetime History Logs";
-
-    container.innerHTML = `
-        <p>Target Timeline Scope: <strong>${dateRangeText}</strong></p>
-        <p style="margin-top:10px;">Total Spent on Item: <span class="metric-highlight">₹${evaluatedCost.toFixed(2)}</span></p>
-        <p style="margin-top:8px;">Total Quantity Dispatched: <span class="metric-highlight">${qtyString}</span></p>
+    document.getElementById('reportTitleHeader').innerText = `🔍 Item Analysis`;
+    document.getElementById('reportMetricsOutput').innerHTML = `
+        <p>Spent: <span class="metric-highlight">₹${cost.toFixed(2)}</span></p>
+        <p>Total Qty: <span class="metric-highlight">${qty} ${unt}</span></p>
     `;
-    
     document.getElementById('analyticsResult').style.display = 'block';
 });
 
-// Master Reset Event Handler with Password Protection
+// Master Password Reset
 document.getElementById('masterResetBtn').addEventListener('click', () => {
-    const firstConfirm = confirm("⚠️ WARNING: Kya aap sach me poora data delete karna chahte hain? Yeh wapas nahi aayega!");
-    
-    if (firstConfirm) {
-        const enteredPassword = prompt("🔐 Authenticate: Kirpa karke Owner Password enter karein:");
-        
-        if (enteredPassword === null) return;
-        
-        if (enteredPassword === OWNER_PASSWORD) {
-            globalExpenseLedger = [];
-            syncWithLocalStorage();
-            renderLedgerTable();
-            calculateFinancialOverview();
-            
-            document.getElementById('analyticsResult').style.display = 'none';
-            document.getElementById('analyticsItem').value = '';
-            
-            alert("✅ Terminal successfully reset! Saara data delete ho gaya hai.");
-        } else {
-            alert("❌ Access Denied! Galat Password. Data safe hai.");
-        }
+    if (confirm("⚠️ WIPE EVERYTHING?")) {
+        const pass = prompt("🔐 Enter Owner Password:");
+        if (pass === OWNER_PASSWORD) {
+            database.ref('expenses').remove()
+            .then(() => {
+                document.getElementById('analyticsResult').style.display = 'none';
+                alert("✅ Cloud Reset Done.");
+            });
+        } else if (pass !== null) { alert("❌ Access Denied."); }
     }
 });
-
-// Initialize Cold Boot
-renderLedgerTable();
-calculateFinancialOverview();
